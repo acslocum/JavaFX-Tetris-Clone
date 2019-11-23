@@ -11,6 +11,7 @@ public class AdruinoAdapterTest {
 	public void shouldShowBlankArrayOnStartup() {
 		//all blank
 		int [] expected = {
+				255,
 				0,0,0,0,0, 0,0,0,0,0,
                 0,0,0,0,0, 0,0,0,0,0, 
                 0,0,0,0,0, 0,0,0,0,0,
@@ -49,6 +50,7 @@ public class AdruinoAdapterTest {
 	public void shouldShowFirstPieceAndABlankField() {
 		//first piece is a teewee
 		int [] expected = {
+				255,
 				0,0,0,0,0, 0,0,0,0,0,
                 0,0,0,0,0, 0,0,0,0,0, 
                 0,0,0,0,0, 0,0,0,0,0,
@@ -87,6 +89,7 @@ public class AdruinoAdapterTest {
 	public void shouldShowYellowSquareBottomLeftAndRedTetrisNext() {
 		//smashboy left corner, hero up next
 		int [] expected = {
+				255,
 				0,0,0,0,0, 0,0,0,0,0,
                 0,0,0,0,0, 0,0,0,0,0, 
                 0,0,0,0,0, 0,0,0,0,0,
