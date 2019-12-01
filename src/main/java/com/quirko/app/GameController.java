@@ -34,23 +34,10 @@ public class GameController implements InputEventListener {
             clearRow = board.clearRows();
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
-                // TODO check score thresholds and play a sound
-                try {
-                	int jokeIndex = 0;
-                	int score = board.getScore().scoreProperty().get();
-                	if (score > 1000) {
-                		jokeIndex = 2;
-                   	} else if (score > 500) {
-                		jokeIndex = 1;
-                	} 	
-					Runtime.getRuntime().exec(String.format("say -v Yuri %s", dialog[jokeIndex]));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-                
+                playFishJoke();
             }
             if (board.createNewBrick()) {
+            	playGameOver();
                 viewGuiController.gameOver();
             }
 
@@ -90,6 +77,29 @@ public class GameController implements InputEventListener {
     public void createNewGame() {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+    }
+    
+    private void playGameOver() {
+    	try {    	
+			Runtime.getRuntime().exec(String.format("say -v Yuri %s", "You've just been schooled!"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    private void playFishJoke() {
+	 	int score = board.getScore().scoreProperty().get();
+        
+	 	int jokeIndex = (score / 500); // TODO adjust rate of progression, consider some random shuffling up or down a level.
+	 	if (jokeIndex >= dialog.length) {
+	 		jokeIndex = dialog.length-1;
+	 	}
+ 	
+        try {    	
+			Runtime.getRuntime().exec(String.format("say -v Yuri %s", dialog[jokeIndex]));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     private int[] getArduinoBoardMatrix(int[][] boardMatrix, int[][] nextMatrix) {
