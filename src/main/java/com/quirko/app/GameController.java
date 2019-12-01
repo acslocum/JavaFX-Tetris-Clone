@@ -102,7 +102,7 @@ public class GameController implements InputEventListener {
 		}
     }
     
-    private int[] getArduinoBoardMatrix(int[][] boardMatrix, int[][] nextMatrix) {
+    public static int[] getArduinoBoardMatrix(int[][] boardMatrix, int[][] nextMatrix) {
     	int boardLength = boardMatrix.length;
     	int boardWidth  = boardMatrix[0].length;
     	int nextLength  = nextMatrix.length;
@@ -118,13 +118,13 @@ public class GameController implements InputEventListener {
     			arduinoMatrix[x++] = boardMatrix[i][j];
     		}
     	}
-    	for (int i=0; i<=nextLength; i++) {
-    		for (int j=0; j<=nextWidth; j++) {
-    			if ((i==nextLength)||(j==nextWidth)) {
-    				arduinoMatrix[x++] = 0;
-    			} else {
+    	for (int i=0; i<5; i++) {
+    		arduinoMatrix[x++] = 0;
+    	}
+    	for (int i=0; i<nextLength; i++) {
+    		arduinoMatrix[x++] = 0;
+    		for (int j=0; j<nextWidth; j++) {
     				arduinoMatrix[x++] = nextMatrix[i][j];
-    			}
     		}
     	}
 
