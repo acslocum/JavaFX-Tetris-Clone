@@ -1,6 +1,8 @@
 package com.quirko.app;
 
 import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Arrays;
 
 import com.quirko.gui.GuiController;
 import com.quirko.logic.*;
@@ -10,6 +12,7 @@ import com.quirko.logic.events.MoveEvent;
 
 public class GameController implements InputEventListener {
 
+    private static final byte CONTROL_CHARACTER = (byte)255;
     private Board board = new SimpleBoard(20, 10);
     private String[] dialog = {"this is a good fish joke", 
     						   "have your heard my really good fish joke",
@@ -42,8 +45,8 @@ public class GameController implements InputEventListener {
             }
 
 
-            int[] arduinoMatrix = getArduinoBoardMatrix(board.getBoardMatrix(), board.getViewData().getNextBrickData());
-            // TODO pass it to Arduino.
+            byte[] arduinoMatrix = getArduinoBoardMatrix(board.getBoardMatrix(), board.getViewData().getNextBrickData());
+            sendToArduino(arduinoMatrix);
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
 
         } else {
@@ -53,6 +56,15 @@ public class GameController implements InputEventListener {
         }
         return new DownData(clearRow, board.getViewData());
     }
+
+	private void sendToArduino(byte[] arduinoMatrix) {
+		try {
+			PrintStream stream = new PrintStream(System.out);
+			stream.write(arduinoMatrix);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
     @Override
     public ViewData onLeftEvent(MoveEvent event) {
@@ -102,20 +114,20 @@ public class GameController implements InputEventListener {
 		}
     }
     
-    public static int[] getArduinoBoardMatrix(int[][] boardMatrix, int[][] nextMatrix) {
+    public static byte[] getArduinoBoardMatrix(int[][] boardMatrix, int[][] nextMatrix) {
     	int boardLength = boardMatrix.length;
     	int boardWidth  = boardMatrix[0].length;
     	int nextLength  = nextMatrix.length;
     	int nextWidth   = nextMatrix[0].length;
     	
     	int totallength = boardLength * boardWidth + (nextLength+1) * (nextWidth+1) + 1;
-    	int[] arduinoMatrix = new int[totallength];
+    	byte[] arduinoMatrix = new byte[totallength];
     	
     	int x=0;
-    	arduinoMatrix[x++] = 255;
+    	arduinoMatrix[x++] = CONTROL_CHARACTER;
     	for (int i=0; i<boardLength; i++) {
     		for (int j=0; j<boardWidth; j++) {
-    			arduinoMatrix[x++] = boardMatrix[i][j];
+    			arduinoMatrix[x++] = (byte)boardMatrix[i][j];
     		}
     	}
     	for (int i=0; i<5; i++) {
@@ -124,7 +136,7 @@ public class GameController implements InputEventListener {
     	for (int i=0; i<nextLength; i++) {
     		arduinoMatrix[x++] = 0;
     		for (int j=0; j<nextWidth; j++) {
-    				arduinoMatrix[x++] = nextMatrix[i][j];
+    				arduinoMatrix[x++] = (byte)nextMatrix[i][j];
     		}
     	}
 

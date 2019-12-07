@@ -7,13 +7,14 @@ import org.junit.Test;
 import com.quirko.app.GameController;
 
 public class AdruinoAdapterTest {
-	int R = 5;
+	byte CONTROL = (byte)255;
+	byte R = 5;
 
 	@Test
 	public void shouldShowBlankArrayOnStartup() {
 		//all blank
-		int [] expected = {
-				255,
+		byte [] expected = {
+				CONTROL,
 				0,0,0,0,0, 0,0,0,0,0,
                 0,0,0,0,0, 0,0,0,0,0, 
                 0,0,0,0,0, 0,0,0,0,0,
@@ -73,7 +74,7 @@ public class AdruinoAdapterTest {
 								{0, 0, 0, 0}
 							  };
 
-		int [] actual = GameController.getArduinoBoardMatrix(boardMatrix, nextMatrix);
+		byte [] actual = GameController.getArduinoBoardMatrix(boardMatrix, nextMatrix);
 
 		assertArrayEquals(expected, actual);
 	}
@@ -81,8 +82,8 @@ public class AdruinoAdapterTest {
 	@Test
 	public void shouldShowFirstPieceAndABlankField() {
 		//first piece is a teewee
-		int [] expected = {
-				255,
+		byte [] expected = {
+				CONTROL,
 				0,0,0,0,0, 0,0,0,0,0,
                 0,0,0,0,0, 0,0,0,0,0, 
                 0,0,0,0,0, 0,0,0,0,0,
@@ -141,15 +142,15 @@ public class AdruinoAdapterTest {
 								{0, 0, 0, 0}
 							  };
 		
-		int [] actual = GameController.getArduinoBoardMatrix(boardMatrix, nextMatrix);
+		byte [] actual = GameController.getArduinoBoardMatrix(boardMatrix, nextMatrix);
 		assertArrayEquals(expected, actual);
 	}
 	
 	@Test
 	public void shouldShowYellowSquareBottomLeftAndRedTetrisNext() {
 		//smashboy left corner, hero up next
-		int [] expected = {
-				255,
+		byte [] expected = {
+				CONTROL,
 				0,0,0,0,0, 0,0,0,0,0,
                 0,0,0,0,0, 0,0,0,0,0, 
                 0,0,0,0,0, 0,0,0,0,0,
@@ -207,7 +208,7 @@ public class AdruinoAdapterTest {
 								{0, 0, R, 0},
 								{0, 0, R, 0}
 							  };
-		int [] actual = GameController.getArduinoBoardMatrix(boardMatrix, nextMatrix);
+		byte [] actual = GameController.getArduinoBoardMatrix(boardMatrix, nextMatrix);
 		assertArrayEquals(expected, actual);
 	}
 
