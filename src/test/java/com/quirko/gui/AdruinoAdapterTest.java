@@ -5,9 +5,12 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.quirko.app.GameController;
+import com.quirko.logic.ViewData;
 
 public class AdruinoAdapterTest {
 	byte R = 5;
+	int[][] dummy = {{}};
+
 
 	@Test
 	public void shouldShowBlankArrayOnStartup() {
@@ -72,7 +75,7 @@ public class AdruinoAdapterTest {
 								{0, 0, 0, 0}
 							  };
 
-		byte [] actual = GameController.getArduinoBoardMatrix(boardMatrix, nextMatrix);
+		byte [] actual = GameController.getArduinoBoardMatrix(boardMatrix, new ViewData(dummy, 0,0, nextMatrix));
 
 		assertArrayEquals(expected, actual);
 	}
@@ -139,7 +142,7 @@ public class AdruinoAdapterTest {
 								{0, 0, 0, 0}
 							  };
 		
-		byte [] actual = GameController.getArduinoBoardMatrix(boardMatrix, nextMatrix);
+		byte [] actual = GameController.getArduinoBoardMatrix(boardMatrix, new ViewData(dummy, 0,0, nextMatrix));
 		assertArrayEquals(expected, actual);
 	}
 	
@@ -204,7 +207,7 @@ public class AdruinoAdapterTest {
 								{0, 0, R, 0},
 								{0, 0, R, 0}
 							  };
-		byte [] actual = GameController.getArduinoBoardMatrix(boardMatrix, nextMatrix);
+		byte [] actual = GameController.getArduinoBoardMatrix(boardMatrix, new ViewData(dummy, 0,0, nextMatrix));
 		assertArrayEquals(expected, actual);
 	}
 

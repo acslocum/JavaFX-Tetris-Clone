@@ -12,6 +12,8 @@ public interface InputEventListener {
     ViewData onRightEvent(MoveEvent event);
 
     ViewData onRotateEvent(MoveEvent event);
+    
+    void updateArduino();
 
     void createNewGame();
 }

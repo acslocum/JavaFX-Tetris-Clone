@@ -1,5 +1,6 @@
 package com.quirko.gui;
 
+import com.fazecast.jSerialComm.SerialPort;
 import com.quirko.logic.DownData;
 import com.quirko.logic.ViewData;
 import com.quirko.logic.events.*;
@@ -69,7 +70,7 @@ public class GuiController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
+		Font.loadFont(getClass().getClassLoader().getResource("digital.ttf").toExternalForm(), 38);
         gamePanel.setFocusTraversable(true);
         gamePanel.requestFocus();
         gamePanel.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -79,18 +80,22 @@ public class GuiController implements Initializable {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
                         keyEvent.consume();
+                        eventListener.updateArduino();
                     }
                     if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
                         refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
                         keyEvent.consume();
+                        eventListener.updateArduino();
                     }
                     if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
                         refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
                         keyEvent.consume();
-                    }
+                        eventListener.updateArduino();
+                   }
                     if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
+                        eventListener.updateArduino();
                     }
                 }
                 if (keyEvent.getCode() == KeyCode.N) {
@@ -240,6 +245,7 @@ public class GuiController implements Initializable {
                 notificationPanel.showScore(groupNotification.getChildren());
             }
             refreshBrick(downData.getViewData());
+            eventListener.updateArduino();
         }
         gamePanel.requestFocus();
     }
@@ -272,4 +278,5 @@ public class GuiController implements Initializable {
     public void pauseGame(ActionEvent actionEvent) {
         gamePanel.requestFocus();
     }
+    
 }

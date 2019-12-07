@@ -48,8 +48,6 @@ public class GameController implements InputEventListener {
             }
 
 
-            byte[] arduinoMatrix = getArduinoBoardMatrix(board.getBoardMatrix(), board.getViewData().getNextBrickData());
-            sendToArduino(arduinoMatrix);
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
 
         } else {
@@ -59,6 +57,11 @@ public class GameController implements InputEventListener {
         }
         return new DownData(clearRow, board.getViewData());
     }
+
+	public void updateArduino() {
+		byte[] arduinoMatrix = getArduinoBoardMatrix(board.getBoardMatrix(), board.getViewData());
+		sendToArduino(arduinoMatrix);
+	}
 
 	private void sendToArduino(byte[] arduinoMatrix) {
 		int offset = 0;
@@ -122,7 +125,8 @@ public class GameController implements InputEventListener {
 		}
     }
     
-    public static byte[] getArduinoBoardMatrix(int[][] boardMatrix, int[][] nextMatrix) {
+    public static byte[] getArduinoBoardMatrix(int[][] boardMatrix, ViewData viewData) {
+    	int[][] nextMatrix = viewData.getNextBrickData();
     	int boardLength = boardMatrix.length;
     	int boardWidth  = boardMatrix[0].length;
     	int nextLength  = nextMatrix.length;
@@ -149,7 +153,23 @@ public class GameController implements InputEventListener {
     				arduinoMatrix[x++] = (byte)nextMatrix[i][j];
     		}
     	}
+    	
+    	addCurrentBrick(arduinoMatrix, viewData.getBrickData(),viewData.getxPosition(),viewData.getyPosition());
 
 		return arduinoMatrix;    	
+    }
+    
+    public static void addCurrentBrick(byte[] arduinoMatrix, int[][] brick, int x, int y) {
+        for (int i = 0; i < brick.length; i++) {
+            for (int j = 0; j < brick[i].length; j++) {
+                int targetX = x + i;
+                int targetY = y + j;
+                int linearIndex = targetX+1 + 11*targetY;
+                if (brick[j][i] != 0) {
+                	arduinoMatrix[linearIndex] = (byte)brick[j][i];
+                }
+            }
+        }
+
     }
 }
