@@ -29,11 +29,34 @@
 				<configuration>
 				  <archive>
 				    <manifest>
-					<mainClass>com.quirko.gui.Main</mainClass>
+						<mainClass>com.quirko.gui.Main</mainClass>
 				    </manifest>
 				  </archive>
 				</configuration>
 		    </plugin>
+		    <plugin>
+			    <artifactId>maven-assembly-plugin</artifactId>
+		        <version>3.2.0</version>
+		        <configuration>
+		          <descriptorRefs>
+		            <descriptorRef>jar-with-dependencies</descriptorRef>
+		          </descriptorRefs>
+		          <archive>
+		            <manifest>
+		              <mainClass>com.quirko.gui.Main</mainClass>
+		            </manifest>
+		          </archive>
+		        </configuration>
+		        <executions>
+		          <execution>
+		            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+		            <phase>package</phase> <!-- bind to the packaging phase -->
+		            <goals>
+		              <goal>single</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+	        </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -41,6 +64,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+		   <groupId>com.fazecast</groupId>
+		   <artifactId>jSerialComm</artifactId>
+		   <version>2.5.3</version>
         </dependency>
     </dependencies>
 </project>

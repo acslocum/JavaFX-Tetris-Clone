@@ -1,9 +1,8 @@
 package com.quirko.app;
 
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Arrays;
 
+import com.fazecast.jSerialComm.SerialPort;
 import com.quirko.gui.GuiController;
 import com.quirko.logic.*;
 import com.quirko.logic.events.EventSource;
@@ -11,8 +10,7 @@ import com.quirko.logic.events.InputEventListener;
 import com.quirko.logic.events.MoveEvent;
 
 public class GameController implements InputEventListener {
-
-    private static final byte CONTROL_CHARACTER = (byte)255;
+	SerialPort port;
     private Board board = new SimpleBoard(20, 10);
     private String[] dialog = {"this is a good fish joke", 
     						   "have your heard my really good fish joke",
@@ -26,6 +24,11 @@ public class GameController implements InputEventListener {
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
+ 
+    
+		port = SerialPort.getCommPort("/dev/cu.usbmodem14101");
+		port.setBaudRate(9600);
+		port.openPort();
     }
 
     @Override
@@ -58,12 +61,17 @@ public class GameController implements InputEventListener {
     }
 
 	private void sendToArduino(byte[] arduinoMatrix) {
+		int offset = 0;
+		while(port.bytesAwaitingWrite() < 0) {
+			System.out.println("waiting");
+		}
 		try {
-			PrintStream stream = new PrintStream(System.out);
-			stream.write(arduinoMatrix);
-		} catch (IOException e) {
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		port.writeBytes(arduinoMatrix,arduinoMatrix.length,offset);
 	}
 
     @Override
@@ -120,20 +128,22 @@ public class GameController implements InputEventListener {
     	int nextLength  = nextMatrix.length;
     	int nextWidth   = nextMatrix[0].length;
     	
-    	int totallength = boardLength * boardWidth + (nextLength+1) * (nextWidth+1) + 1;
+    	int totallength = boardLength * (boardWidth+1) + (nextLength+1) * (nextWidth+1+1);
     	byte[] arduinoMatrix = new byte[totallength];
     	
     	int x=0;
-    	arduinoMatrix[x++] = CONTROL_CHARACTER;
     	for (int i=0; i<boardLength; i++) {
+    		arduinoMatrix[x++] = (byte)(100+i);//row number
     		for (int j=0; j<boardWidth; j++) {
     			arduinoMatrix[x++] = (byte)boardMatrix[i][j];
     		}
     	}
+    	arduinoMatrix[x++] = (byte)120; //row number for next
     	for (int i=0; i<5; i++) {
     		arduinoMatrix[x++] = 0;
     	}
     	for (int i=0; i<nextLength; i++) {
+    		arduinoMatrix[x++] = (byte)(121+i);
     		arduinoMatrix[x++] = 0;
     		for (int j=0; j<nextWidth; j++) {
     				arduinoMatrix[x++] = (byte)nextMatrix[i][j];
