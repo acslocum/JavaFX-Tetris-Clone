@@ -156,10 +156,15 @@ public class GuiController implements Initializable {
 
         timeLine = new Timeline(new KeyFrame(
                 Duration.millis(400),
-                ae -> moveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
+                ae -> timelineMoveDown(new MoveEvent(EventType.DOWN, EventSource.THREAD))
         ));
         timeLine.setCycleCount(Timeline.INDEFINITE);
         timeLine.play();
+    }
+    
+    private void timelineMoveDown(MoveEvent event) {
+    	moveDown(event);
+    	eventListener.updatePiece();
     }
 
     private Paint getFillColor(int i) {

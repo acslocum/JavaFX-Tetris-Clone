@@ -11,7 +11,7 @@ import com.quirko.logic.events.MoveEvent;
 
 public class GameController implements InputEventListener {
 	long lastUpdated = 0;
-	static final long RATE_LIMIT_MS = 100;
+	static final long RATE_LIMIT_MS = 400;
 	static final int ROW_INDEX_OFFSET = 100;
 	static final int NEXT_PIECE_INDEX_OFFSET = ROW_INDEX_OFFSET + 20;
 	SerialPort port;
@@ -58,6 +58,9 @@ public class GameController implements InputEventListener {
             if (event.getEventSource() == EventSource.USER) {
                 board.getScore().add(1);
             }
+    		if(System.currentTimeMillis() - lastUpdated > RATE_LIMIT_MS) {//rate limit, but update the board once in a while just in case
+    			updateFullBoard();
+    		}
         }
         return new DownData(clearRow, board.getViewData());
     }
@@ -74,7 +77,7 @@ public class GameController implements InputEventListener {
 		//}
 		byte[] arduinoMatrix = getArduinoPieceMatrix(board.getBoardMatrix(), board.getViewData());
 		sendToArduino(arduinoMatrix);
-		lastUpdated = System.currentTimeMillis();
+		//lastUpdated = System.currentTimeMillis();
 	}
 
 	private void sendToArduino(byte[] arduinoMatrix) {
