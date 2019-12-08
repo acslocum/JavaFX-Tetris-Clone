@@ -13,7 +13,9 @@ public interface InputEventListener {
 
     ViewData onRotateEvent(MoveEvent event);
     
-    void updateArduino();
+    void updateFullBoard();
+
+    void updatePiece();
 
     void createNewGame();
 }

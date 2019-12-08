@@ -80,22 +80,22 @@ public class GuiController implements Initializable {
                     if (keyEvent.getCode() == KeyCode.LEFT || keyEvent.getCode() == KeyCode.A) {
                         refreshBrick(eventListener.onLeftEvent(new MoveEvent(EventType.LEFT, EventSource.USER)));
                         keyEvent.consume();
-                        eventListener.updateArduino();
+                        eventListener.updatePiece();
                     }
                     if (keyEvent.getCode() == KeyCode.RIGHT || keyEvent.getCode() == KeyCode.D) {
                         refreshBrick(eventListener.onRightEvent(new MoveEvent(EventType.RIGHT, EventSource.USER)));
                         keyEvent.consume();
-                        eventListener.updateArduino();
+                        eventListener.updatePiece();
                     }
                     if (keyEvent.getCode() == KeyCode.UP || keyEvent.getCode() == KeyCode.W) {
                         refreshBrick(eventListener.onRotateEvent(new MoveEvent(EventType.ROTATE, EventSource.USER)));
                         keyEvent.consume();
-                        eventListener.updateArduino();
+                        eventListener.updatePiece();
                    }
                     if (keyEvent.getCode() == KeyCode.DOWN || keyEvent.getCode() == KeyCode.S) {
                         moveDown(new MoveEvent(EventType.DOWN, EventSource.USER));
                         keyEvent.consume();
-                        eventListener.updateArduino();
+                        eventListener.updatePiece();
                     }
                 }
                 if (keyEvent.getCode() == KeyCode.N) {
@@ -245,7 +245,6 @@ public class GuiController implements Initializable {
                 notificationPanel.showScore(groupNotification.getChildren());
             }
             refreshBrick(downData.getViewData());
-            eventListener.updateArduino();
         }
         gamePanel.requestFocus();
     }

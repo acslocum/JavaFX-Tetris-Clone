@@ -10,6 +10,10 @@ import com.quirko.logic.events.InputEventListener;
 import com.quirko.logic.events.MoveEvent;
 
 public class GameController implements InputEventListener {
+	long lastUpdated = 0;
+	static final long RATE_LIMIT_MS = 100;
+	static final int ROW_INDEX_OFFSET = 100;
+	static final int NEXT_PIECE_INDEX_OFFSET = ROW_INDEX_OFFSET + 20;
 	SerialPort port;
     private Board board = new SimpleBoard(20, 10);
     private String[] dialog = {"this is a good fish joke", 
@@ -47,7 +51,7 @@ public class GameController implements InputEventListener {
                 viewGuiController.gameOver();
             }
 
-
+            updateFullBoard();
             viewGuiController.refreshGameBackground(board.getBoardMatrix());
 
         } else {
@@ -58,9 +62,19 @@ public class GameController implements InputEventListener {
         return new DownData(clearRow, board.getViewData());
     }
 
-	public void updateArduino() {
+	public void updateFullBoard() {
 		byte[] arduinoMatrix = getArduinoBoardMatrix(board.getBoardMatrix(), board.getViewData());
 		sendToArduino(arduinoMatrix);
+		lastUpdated = System.currentTimeMillis();
+	}
+	
+	public void updatePiece() {
+		//if(System.currentTimeMillis() - lastUpdated < RATE_LIMIT_MS) {//rate limit
+		//	return;
+		//}
+		byte[] arduinoMatrix = getArduinoPieceMatrix(board.getBoardMatrix(), board.getViewData());
+		sendToArduino(arduinoMatrix);
+		lastUpdated = System.currentTimeMillis();
 	}
 
 	private void sendToArduino(byte[] arduinoMatrix) {
@@ -137,17 +151,17 @@ public class GameController implements InputEventListener {
     	
     	int x=0;
     	for (int i=0; i<boardLength; i++) {
-    		arduinoMatrix[x++] = (byte)(100+i);//row number
+    		arduinoMatrix[x++] = (byte)(ROW_INDEX_OFFSET+i);//row number
     		for (int j=0; j<boardWidth; j++) {
     			arduinoMatrix[x++] = (byte)boardMatrix[i][j];
     		}
     	}
-    	arduinoMatrix[x++] = (byte)120; //row number for next
+    	arduinoMatrix[x++] = (byte)NEXT_PIECE_INDEX_OFFSET; //row number for next
     	for (int i=0; i<5; i++) {
     		arduinoMatrix[x++] = 0;
     	}
     	for (int i=0; i<nextLength; i++) {
-    		arduinoMatrix[x++] = (byte)(121+i);
+    		arduinoMatrix[x++] = (byte)(NEXT_PIECE_INDEX_OFFSET+1+i);
     		arduinoMatrix[x++] = 0;
     		for (int j=0; j<nextWidth; j++) {
     				arduinoMatrix[x++] = (byte)nextMatrix[i][j];
@@ -159,17 +173,39 @@ public class GameController implements InputEventListener {
 		return arduinoMatrix;    	
     }
     
+    //add the current brick into only the section of board it belongs in
+    public static byte[] getArduinoPieceMatrix(int[][] boardMatrix, ViewData viewData) {
+    	int totalLength = 11*4;//full width of 4 rows
+    	byte[] arduinoMatrix = new byte[totalLength];
+    	byte startRowIndex = (byte)(viewData.getyPosition() + ROW_INDEX_OFFSET);
+    	int[][] brick = viewData.getBrickData();
+    	boardMatrix = MatrixOperations.merge(boardMatrix, brick, viewData.getxPosition(), viewData.getyPosition());
+    	for(int i=0;i<brick.length;++i) {
+    		int targetY = viewData.getyPosition() + i;
+    		arduinoMatrix[11*i] = (byte)(startRowIndex + i);
+    		for(int j=0;j<boardMatrix[i].length;++j) {
+    			int targetX = j;
+    			int linearMatrix = 11*i + targetX + 1;
+    			if(targetY <= 19) {
+    				//the piece matrix can extend below the end of the board
+    				arduinoMatrix[linearMatrix] = (byte)boardMatrix[targetY][targetX];
+    			}
+    		}
+    	}
+    	return arduinoMatrix;
+    }
+    
+    //add the current brick into the entire board
     public static void addCurrentBrick(byte[] arduinoMatrix, int[][] brick, int x, int y) {
         for (int i = 0; i < brick.length; i++) {
             for (int j = 0; j < brick[i].length; j++) {
-                int targetX = x + i;
-                int targetY = y + j;
+                int targetX = x + j;
+                int targetY = y + i;
                 int linearIndex = targetX+1 + 11*targetY;
-                if (brick[j][i] != 0) {
-                	arduinoMatrix[linearIndex] = (byte)brick[j][i];
+                if (brick[i][j] != 0) {
+                	arduinoMatrix[linearIndex] = (byte)brick[i][j];
                 }
             }
         }
-
     }
 }
