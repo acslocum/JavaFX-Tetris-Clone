@@ -10,7 +10,7 @@ public interface Board {
 
     boolean rotateLeftBrick();
 
-    boolean createNewBrick();
+    boolean createNewBrick(boolean tetrisHappened);
 
     int[][] getBoardMatrix();
 

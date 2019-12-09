@@ -2,6 +2,7 @@ package com.quirko.logic;
 
 import com.quirko.logic.bricks.Brick;
 import com.quirko.logic.bricks.BrickGenerator;
+import com.quirko.logic.bricks.FBrick;
 import com.quirko.logic.bricks.RandomBrickGenerator;
 import com.quirko.logic.rotator.BrickRotator;
 import com.quirko.logic.rotator.NextShapeInfo;
@@ -84,9 +85,13 @@ public class SimpleBoard implements Board {
     }
 
     @Override
-    public boolean createNewBrick() {
+    public boolean createNewBrick(boolean tetrisHappened) {
         Brick currentBrick = brickGenerator.getBrick();
-        brickRotator.setBrick(currentBrick);
+        if(tetrisHappened) {
+        	brickRotator.setBrick(new FBrick());
+        } else {
+        	brickRotator.setBrick(currentBrick);
+        }
         currentOffset = new Point(4, 0);
         return MatrixOperations.intersect(currentGameMatrix, brickRotator.getCurrentShape(), (int) currentOffset.getX(), (int) currentOffset.getY());
     }
@@ -124,6 +129,6 @@ public class SimpleBoard implements Board {
     public void newGame() {
         currentGameMatrix = new int[width][height];
         score.reset();
-        createNewBrick();
+        createNewBrick(false);
     }
 }
