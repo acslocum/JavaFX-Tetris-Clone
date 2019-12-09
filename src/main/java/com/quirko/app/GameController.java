@@ -34,7 +34,7 @@ public class GameController implements InputEventListener {
         viewGuiController.bindScore(board.getScore().scoreProperty());
  
     
-		port = SerialPort.getCommPort("/dev/cu.usbmodem14101");
+		port = SerialPort.getCommPort("/dev/cu.usbmodem14201");
 		port.setBaudRate(9600);
 		port.openPort();
     }
@@ -135,8 +135,11 @@ public class GameController implements InputEventListener {
 		}
     }
     private void playGameOver() {
+    	int score = board.getScore().scoreProperty().get();
+        
     	try {    	
-			Runtime.getRuntime().exec(String.format("say -v %s %s", getRandomVoice(), "You've just been schooled"));
+			Runtime.getRuntime().exec(String.format("say -v %s %s %d", getRandomVoice(), "You've just been schooled, your score is,", score));
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -146,11 +149,10 @@ public class GameController implements InputEventListener {
 	 	int score = board.getScore().scoreProperty().get();
         
 	 	int jokeIndex = (score / 500);
-	 	jokeIndex += ThreadLocalRandom.current().nextInt(2) - 1;
+	 	 
+	 	jokeIndex += ThreadLocalRandom.current().nextInt(2);
 	 	if (jokeIndex >= dialog.length) {
 	 		jokeIndex = dialog.length-1;
-	 	} else if (jokeIndex < 0) {
-	 		jokeIndex = 0;
 	 	}
 	 	
         try {    	
