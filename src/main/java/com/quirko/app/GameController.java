@@ -1,6 +1,8 @@
 package com.quirko.app;
 
 import java.io.IOException;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.quirko.gui.GuiController;
@@ -20,6 +22,8 @@ public class GameController implements InputEventListener {
     						   "have your heard my really good fish joke",
     						   "why did the fish cross the road?"};
 
+    private String[] voices = {"Yuri", "Katya", "Milena"};
+    
     private final GuiController viewGuiController;
 
     public GameController(GuiController c) {
@@ -81,6 +85,7 @@ public class GameController implements InputEventListener {
 	}
 
 	private void sendToArduino(byte[] arduinoMatrix) {
+		/*
 		int offset = 0;
 		while(port.bytesAwaitingWrite() < 0) {
 			System.out.println("waiting");
@@ -92,6 +97,7 @@ public class GameController implements InputEventListener {
 			e.printStackTrace();
 		}
 		port.writeBytes(arduinoMatrix,arduinoMatrix.length,offset);
+		*/
 	}
 
     @Override
@@ -117,11 +123,24 @@ public class GameController implements InputEventListener {
     public void createNewGame() {
         board.newGame();
         viewGuiController.refreshGameBackground(board.getBoardMatrix());
+        playGameStart();
     }
     
+    private String getRandomVoice() {
+    	int index = ThreadLocalRandom.current().nextInt(voices.length);
+    	return voices[index];
+    }
+    
+    private void playGameStart() {
+    	try {    	
+			Runtime.getRuntime().exec(String.format("say -v %s %s", getRandomVoice(), "If you know any good fish jokes, let minnow"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
     private void playGameOver() {
     	try {    	
-			Runtime.getRuntime().exec(String.format("say -v Yuri %s", "You've just been schooled!"));
+			Runtime.getRuntime().exec(String.format("say -v %s %s", getRandomVoice(), "You've just been schooled"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -130,13 +149,16 @@ public class GameController implements InputEventListener {
     private void playFishJoke() {
 	 	int score = board.getScore().scoreProperty().get();
         
-	 	int jokeIndex = (score / 500); // TODO adjust rate of progression, consider some random shuffling up or down a level.
+	 	int jokeIndex = (score / 500);
+	 	jokeIndex += ThreadLocalRandom.current().nextInt(2) - 1;
 	 	if (jokeIndex >= dialog.length) {
 	 		jokeIndex = dialog.length-1;
+	 	} else if (jokeIndex < 0) {
+	 		jokeIndex = 0;
 	 	}
- 	
+	 	
         try {    	
-			Runtime.getRuntime().exec(String.format("say -v Yuri %s", dialog[jokeIndex]));
+			Runtime.getRuntime().exec(String.format("say -v %s %s", getRandomVoice(), dialog[jokeIndex]));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
