@@ -28,7 +28,7 @@ public class GameController implements InputEventListener {
 
     public GameController(GuiController c) {
         viewGuiController = c;
-        board.createNewBrick();
+        board.createNewBrick(false);
         viewGuiController.setEventListener(this);
         viewGuiController.initGameView(board.getBoardMatrix(), board.getViewData());
         viewGuiController.bindScore(board.getScore().scoreProperty());
@@ -46,11 +46,12 @@ public class GameController implements InputEventListener {
         if (!canMove) {
             board.mergeBrickToBackground();
             clearRow = board.clearRows();
+            boolean tetrisHappened = clearRow.getLinesRemoved() == 4;
             if (clearRow.getLinesRemoved() > 0) {
                 board.getScore().add(clearRow.getScoreBonus());
                 playFishJoke();
             }
-            if (board.createNewBrick()) {
+            if (board.createNewBrick(tetrisHappened)) {
             	playGameOver();
                 viewGuiController.gameOver();
             }
@@ -76,12 +77,8 @@ public class GameController implements InputEventListener {
 	}
 	
 	public void updatePiece() {
-		//if(System.currentTimeMillis() - lastUpdated < RATE_LIMIT_MS) {//rate limit
-		//	return;
-		//}
 		byte[] arduinoMatrix = getArduinoPieceMatrix(board.getBoardMatrix(), board.getViewData());
 		sendToArduino(arduinoMatrix);
-		//lastUpdated = System.currentTimeMillis();
 	}
 
 	private void sendToArduino(byte[] arduinoMatrix) {
@@ -93,7 +90,6 @@ public class GameController implements InputEventListener {
 		try {
 			Thread.sleep(10);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		port.writeBytes(arduinoMatrix,arduinoMatrix.length,offset);
