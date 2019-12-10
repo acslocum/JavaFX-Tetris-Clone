@@ -18,11 +18,22 @@ public class GameController implements InputEventListener {
 	static final int NEXT_PIECE_INDEX_OFFSET = ROW_INDEX_OFFSET + 20;
 	SerialPort port;
     private Board board = new SimpleBoard(20, 10);
-    private String[] dialog = {"this is a good fish joke", 
-    						   "have your heard my really good fish joke",
-    						   "why did the fish cross the road?"};
+    private String[] dialog = {"This is a fish joke",
+    						   "Why did the fish get bad grades?  Because it was below sea level.",
+    						   "What do you call a surgeon on vacation?  A fishing dock.",
+    						   "How do you make an octopus laugh?  Give it, ten tickles.",
+    						   "These jokes usually flounder",
+    						   "What does a fish do in a cry sis?  They sea, kelp.",
+    						   "I made a joke about fish, but it tanked.",
+    						   "What’s the difference between a piano and a toona?  You can toona piano, but you can’t piano a toona.",
+    						   "Did you hear about the fight at the seafood restaurant?  Two fish got battered.",
+    						   "I don’t always make fish jokes. But when I do, it’s just for the halibut.", 
+    						   "What is a fishes fay vor right TV show? Toona Half Men.",
+    						   "Who do fish pray to?  Cod Ulmighty.",
+    						   "I’ve been telling too many fish jokes, I think I’ll scale back.",
+    						   };
 
-    private String[] voices = {"Yuri", "Katya", "Milena"};
+    private String[] voices = {"Yuri", "Katya"};
     
     private final GuiController viewGuiController;
 
@@ -82,7 +93,7 @@ public class GameController implements InputEventListener {
 	}
 
 	private void sendToArduino(byte[] arduinoMatrix) {
-		/*
+		
 		int offset = 0;
 		while(port.bytesAwaitingWrite() < 0) {
 			System.out.println("waiting");
@@ -93,7 +104,7 @@ public class GameController implements InputEventListener {
 			e.printStackTrace();
 		}
 		port.writeBytes(arduinoMatrix,arduinoMatrix.length,offset);
-		*/
+		
 	}
 
     @Override
@@ -151,10 +162,14 @@ public class GameController implements InputEventListener {
 	 	int score = board.getScore().scoreProperty().get();
         
 	 	int jokeIndex = (score / 500);
-	 	 
-	 	jokeIndex += ThreadLocalRandom.current().nextInt(2);
 	 	if (jokeIndex >= dialog.length) {
-	 		jokeIndex = dialog.length-1;
+	 		jokeIndex = dialog.length - 1;
+	 	}
+	 	 
+	 	int randomShift = ThreadLocalRandom.current().nextInt(3) - 1;
+	 	jokeIndex += randomShift;
+	 	if (jokeIndex < 0 || jokeIndex >= dialog.length) {
+	 		return;
 	 	}
 	 	
         try {    	
