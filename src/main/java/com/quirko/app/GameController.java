@@ -129,6 +129,7 @@ public class GameController implements InputEventListener {
     
     private void playGameStart() {
     	try {    	
+    		Runtime.getRuntime().exec("/usr/local/bin/spotify play");
 			Runtime.getRuntime().exec(String.format("say -v %s %s", getRandomVoice(), "If you know any good fish jokes, let minnow"));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -137,7 +138,8 @@ public class GameController implements InputEventListener {
     private void playGameOver() {
     	int score = board.getScore().scoreProperty().get();
         
-    	try {    	
+    	try {  
+    		Runtime.getRuntime().exec("/usr/local/bin/spotify pause");
 			Runtime.getRuntime().exec(String.format("say -v %s %s %d", getRandomVoice(), "You've just been schooled, your score is,", score));
 			
 		} catch (IOException e) {
