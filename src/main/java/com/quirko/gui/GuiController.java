@@ -99,7 +99,9 @@ public class GuiController implements Initializable {
                     }
                 }
                 if (keyEvent.getCode() == KeyCode.N) {
-                    newGame(null);
+                	if (isGameOver.getValue()) {
+                		newGame(null);
+                	}
                 }
                 if (keyEvent.getCode() == KeyCode.P) {
                     pauseButton.selectedProperty().setValue(!pauseButton.selectedProperty().getValue());
