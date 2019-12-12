@@ -12,6 +12,7 @@ import com.quirko.logic.events.InputEventListener;
 import com.quirko.logic.events.MoveEvent;
 
 public class GameController implements InputEventListener {
+	long highScore = 0;
 	long lastUpdated = 0;
 	static final long RATE_LIMIT_MS = 400;
 	static final int ROW_INDEX_OFFSET = 100;
@@ -19,12 +20,13 @@ public class GameController implements InputEventListener {
 	SerialPort port;
     private Board board = new SimpleBoard(20, 10);
     private String[] dialog = {"This is a fish joke",
-    						   "Why did the fish get bad grades?  Because it was below sea level.",
-    						   "What do you call a surgeon on vacation?  A fishing dock.",
+    						   "Why did the fish, get bad grades?  Because it was below, sea level.",
+    						   "What do you call a surgeon, on vacation?  A fishing, dock.",
     						   "How do you make an octopus laugh?  Give it, ten tickles.",
-    						   "These jokes usually flounder",
+    						   "These jokes, usually flounder",
     						   "What does a fish do in a cry sis?  They sea, kelp.",
     						   "I made a joke about fish, but it tanked.",
+    						   "It's too soon for hurricane, jokes, I'll wait for it to, blow over.",
     						   "What’s the difference between a piano and a toona?  You can toona piano, but you can’t piano a toona.",
     						   "Did you hear about the fight at the seafood restaurant?  Two fish got battered.",
     						   "I don’t always make fish jokes. But when I do, it’s just for the halibut.", 
@@ -151,8 +153,13 @@ public class GameController implements InputEventListener {
         
     	try {  
     		Runtime.getRuntime().exec("/usr/local/bin/spotify pause");
-			Runtime.getRuntime().exec(String.format("say -v %s %s %d", getRandomVoice(), "You've just been schooled, your score is,", score));
-			
+    		if (score > highScore) {
+    			Runtime.getRuntime().exec(String.format("say -v %s %s %d", getRandomVoice(), "That was a, whale, of a performance. Your score is,", score));
+    			highScore = score;
+    		} else {
+    			Runtime.getRuntime().exec(String.format("say -v %s %s %d", getRandomVoice(), "You've just been schooled. Your score is,", score));
+    		}
+    		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
