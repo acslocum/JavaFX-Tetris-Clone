@@ -24,18 +24,19 @@ public class GameController implements InputEventListener {
     						   "What do you call a surgeon, on vacation?  A fishing, dock.",
     						   "How do you make an octopus laugh?  Give it, ten tickles.",
     						   "These jokes, usually flounder",
-    						   "What does a fish do in a cry sis?  They sea, kelp.",
+    						   "What does a fish do in a cry sis?  They, sea kelp.",
     						   "I made a joke about fish, but it tanked.",
     						   "It's too soon, for hurricane jokes, I'll wait for it, to blow over.",
     						   "What’s the difference between a piano and a toona?  You can toona piano, but you can’t piano a toona.",
     						   "Did you hear about the fight at the seafood restaurant?  Two fish got battered.",
     						   "I don’t always make fish jokes. But when I do, it’s just for the halibut.", 
     						   "What is a fishes fay vor right TV show? Toona Half Men.",
-    						   "Who do fish pray to?  Cod Ulmighty.",
+    						   "Who do fish pray to?  Cod, all mighty.",
     						   "I’ve been telling too many fish jokes, I think I’ll scale back.",
     						   "I had a curlfriend, I lobster, but then I flounder",
     						   "I'm so angry, I could krill someone",
-    						   "Keep your friends close, and your an enemies closer."
+    						   "Keep your friends close, and your an enemies closer.",
+    						   "If you know any good fish jokes, let minnow"
     						   };
 
     private String[] voices = {"Yuri", "Katya"};
@@ -50,7 +51,7 @@ public class GameController implements InputEventListener {
         viewGuiController.bindScore(board.getScore().scoreProperty());
  
     
-		port = SerialPort.getCommPort("/dev/cu.usbmodem14201");
+		port = SerialPort.getCommPort("/dev/cu.usbmodem14101");
 		port.setBaudRate(9600);
 		port.openPort();
     }
@@ -146,21 +147,21 @@ public class GameController implements InputEventListener {
     private void playGameStart() {
     	try {    	
     		Runtime.getRuntime().exec("/usr/local/bin/spotify play");
-			Runtime.getRuntime().exec(String.format("say -v %s %s", getRandomVoice(), "If you know any good fish jokes, let minnow"));
+			Runtime.getRuntime().exec(String.format("say -v %s %s", getRandomVoice(), "get ready to be schooled."));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
     private void playGameOver() {
     	int score = board.getScore().scoreProperty().get();
-        
+    	
     	try {  
     		Runtime.getRuntime().exec("/usr/local/bin/spotify pause");
     		if (score > highScore) {
-    			Runtime.getRuntime().exec(String.format("say -v %s %s %d", getRandomVoice(), "That was a, whale, of a performance. Your score is,", score));
+    			Runtime.getRuntime().exec(String.format("say -v Samantha %s %d", "It's a new high score!  Your score, is,", score));
     			highScore = score;
     		} else {
-    			Runtime.getRuntime().exec(String.format("say -v %s %s %d", getRandomVoice(), "You've just been schooled. Your score is,", score));
+    			Runtime.getRuntime().exec(String.format("say -v Samantha %s %d", "Your score, is,", score));
     		}
     		
 		} catch (IOException e) {
